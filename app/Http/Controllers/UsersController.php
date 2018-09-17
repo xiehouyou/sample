@@ -92,7 +92,7 @@ class UsersController extends Controller
     }
 
  /*用户控制器定义一个 sendEmailConfirmationTo方法，该方法将用于发送邮件给指定用户。我们会在用户注册成功之后调用该方法来发送激活邮件*/
-    protected function sendEmailConfirmationTo($user)
+ /*   protected function sendEmailConfirmationTo($user)
     {
         $view = 'emails.confirm';
         $data = compact('user');
@@ -103,6 +103,17 @@ class UsersController extends Controller
 
         Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
             $message->from($from, $name)->to($to)->subject($subject);
+        });
+    }*/
+     protected function sendEmailConfirmationTo($user)
+    {
+        $view = 'emails.confirm';
+        $data = compact('user');
+        $to = $user->email;
+        $subject = "感谢注册 Sample 应用！请确认你的邮箱。";
+
+        Mail::send($view, $data, function ($message) use ($to, $subject) {
+            $message->to($to)->subject($subject);
         });
     }
  /*   完成前面定义的 confirm_email 路由对应的控制器方法 confirmEmail*/

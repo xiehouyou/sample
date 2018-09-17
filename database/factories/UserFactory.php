@@ -39,6 +39,8 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'email' => $faker->safeEmail,
         //将生成的假用户默认为非管理，字段设置为非管理员
         'is_admin' => false,
+        /*将生成的假用户和第一位用户都设为已激活状态。*/
+        'activated' => false,
         'password' => $password ?: $password = bcrypt('secret'),
         'remember_token' => str_random(10),
         'created_at' => $date_time,

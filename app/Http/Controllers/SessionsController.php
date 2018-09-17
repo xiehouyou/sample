@@ -18,22 +18,28 @@ class SessionsController extends Controller
     {
         return view('sessions.create');
     }
-
-   public function store(Request $request)
+    
+       public function store(Request $request)
     {
        $credentials = $this->validate($request, [
            'email' => 'required|email|max:255',
            'password' => 'required'
        ]);
-       	/**
-       	 *Auth::attempt()方法可接收两个参数，第一个参数为需要进行用户身份认证的数组,第二个参数为是否为用户开启『记住我』功能的布尔值。
-       	 */
-       if (Auth::attempt($credentials,$request->has('remember'))) {
-       	//登录成功进行的操作
-           session()->flash('success', '欢迎回来！');
-            return redirect()->intended(route('users.show', [Auth::user()]));
+        /**
+         *Auth::attempt()方法可接收两个参数，第一个参数为需要进行用户身份认证的数组,第二个参数为是否为用户开启『记住我』功能的布尔值。
+         */
+       if (Auth::attempt($credentials, $request->has('remember'))) {
+        //登录成功进行的操作
+           if(Auth::user()->activated) {
+               session()->flash('success', '欢迎回来！');
+               return redirect()->intended(route('users.show', [Auth::user()]));
+           } else {
+               Auth::logout();
+               session()->flash('warning', '你的账号未激活，请检查邮箱中的注册邮件进行激活。');
+               return redirect('/');
+           }
        } else {
-       	//登录失败进行的操作
+        //登录失败进行的操作
            session()->flash('danger', '很抱歉，您的邮箱和密码不匹配');
            return redirect()->back();
        }

@@ -32,10 +32,19 @@ class UsersController extends Controller
     {
     	return view('users.create');
     }
+
     public function show(User $user)
     {
+        $statuses=$user->statuses()
+                       ->orderBy('created_at','desc')
+                       ->paginate(30);
+        return view('users.show',compact('user','statuses'));
+
+    } 
+   /* public function show(User $user)
+    {
     	return view('users.show',compact('user'));
-    }
+    }*/
     /*在我们前面章节加入的登录操作中，用户即使没有激活也能够正常登录。接下来我们需要对之前的登录代码进行修改，当用户没有激活时，则视为认证失败，用户将会被重定向至首页，并显示消息提醒去引导用户查收邮件。*/
         public function store(Request $request)
         {
@@ -128,5 +137,7 @@ class UsersController extends Controller
         Auth::login($user);
         session()->flash('success', '恭喜你，激活成功！');
         return redirect()->route('users.show', [$user]);
-    } 
+    }
+
+    
 }

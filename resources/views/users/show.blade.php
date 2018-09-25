@@ -10,6 +10,17 @@
         </section>
       </div>
     </div>
+    <!-- 在用户的个人页面使用该局部视图和渲染微博的分页链接了。 -->
+    	  <div class="col-md-12">
+      @if (count($statuses) > 0)
+        <ol class="statuses">
+          @foreach ($statuses as $status)
+            @include('statuses._status')
+          @endforeach
+        </ol>
+        {!! $statuses->render() !!}
+      @endif
+    </div>
   </div>
 </div>
 @stop

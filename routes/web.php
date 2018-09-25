@@ -26,7 +26,7 @@ Route::post('login', 'SessionsController@store')->name('login');
 Route::delete('logout', 'SessionsController@destroy')->name('logout');
 
 Route::get('signup/confirm/{token}', 'UsersController@confirmEmail')->name('confirm_email');
-
+Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
 /*Laravel 将密码重设功能相关的逻辑代码都放在了 ForgotPasswordController 和 ResetPasswordController 中，因此我们接下来需要将重设密码相关的路由指定到该控制器上。*/
 
 /*显示重置密码的邮箱发送页面*/

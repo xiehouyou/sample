@@ -5,6 +5,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\User;
 use App\Notifications\ResetPassword;
+use Auth;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -55,7 +56,43 @@ class User extends Authenticatable
 
     public function feed()
     {
-        return $this->statuses()
-                    ->orderBy('created_at','desc');
+        $user_ids = Auth::user()->followings->pluck('id')->toArray();
+        array_push($user_ids, Auth::user()->id);
+        return Status::whereIn('user_id', $user_ids)
+                              ->with('user')
+                              ->orderBy('created_at', 'desc');
+    }
+
+/*belongsToMany 方法的第三个参数 user_id 是定义在关联中的模型外键名，而第四个参数 follower_id 则是要合并的模型外键名。*/
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'user_id', 'follower_id');
+    }
+
+    public function followings()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'follower_id', 'user_id');
+    }
+    /*这两个方法可以让我们非常简单的实现用户的「关注」和「取消关注」的相关逻辑，具体在用户模型中定义关注（follow）和取消关注（unfollow）的方法如下：*/
+    public function follow($user_ids)
+    {
+        if (!is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        $this->followings()->sync($user_ids, false);
+    }
+
+    public function unfollow($user_ids)
+    {
+        if (!is_array($user_ids)) {
+            $user_ids = compact('user_ids');
+        }
+        $this->followings()->detach($user_ids);
+    }
+/*    我们只需要判断用户 B 是否包含在用户 A 的关注人列表上即可。这里我们将用到 contains 方法来做判断。*/
+    public function isFollowing($user_id)
+    {
+        return $this->followings->contains($user_id);
     }
 }

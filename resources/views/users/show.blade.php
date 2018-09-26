@@ -8,10 +8,17 @@
         <section class="user_info">
           @include('shared._user_info', ['user' => $user])
         </section>
+         <section class="stats">
+          @include('shared._stats', ['user' => $user])
+        </section>
       </div>
     </div>
     <!-- 在用户的个人页面使用该局部视图和渲染微博的分页链接了。 -->
     	  <div class="col-md-12">
+          @if (Auth::check())
+        @include('users._follow_form')
+      @endif
+
       @if (count($statuses) > 0)
         <ol class="statuses">
           @foreach ($statuses as $status)

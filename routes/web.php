@@ -37,3 +37,10 @@ Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail'
 Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 /*执行密码更新操作*/
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+/*定义用户关注者列表和粉丝列表的路由，用于对接下来的关注人列表和粉丝列表进行显示。*/
+Route::get('/users/{user}/followings', 'UsersController@followings')->name('users.followings');
+Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.followers');
+/*针对前面开发的「关注用户」和「取消用户」的功能，加入路由定义。*/
+Route::post('/users/followers/{user}', 'FollowersController@store')->name('followers.store');
+Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');
